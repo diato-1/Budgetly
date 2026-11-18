@@ -1,0 +1,610 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budgetly Premium 7.1</title>
+<style>
+:root{--bg:#080e1c;--panel:#111b2e;--panel2:#17243a;--green:#35e69b;--text:#f3f7ff;--muted:#91a0b8;--red:#ff657d;--border:rgba(255,255,255,.08)}
+*{box-sizing:border-box;min-width:0}
+html{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;overflow-x:hidden}
+body.light{--bg:#f2f5fa;--panel:#fff;--panel2:#e9eef6;--text:#172033;--muted:#65738a;--border:rgba(20,35,60,.12);--red:#d9415d}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 5%;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:900}.logo span{color:var(--green)}
+.version{font-size:11px;background:#12372e;color:var(--green);padding:7px 10px;border-radius:20px;white-space:nowrap}
+main{width:100%;max-width:1150px;margin:auto;padding:25px 5% 60px}
+select,input,button{font:inherit}
+select,input{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:11px;border-radius:10px;width:100%;min-width:0;max-width:100%}
+input[type=color]{height:43px;padding:4px}
+input[type=checkbox]{width:auto;max-width:none}
+button{border:0;border-radius:10px;padding:11px 15px;background:var(--green);color:#071b14;font-weight:bold;cursor:pointer;max-width:100%;overflow-wrap:anywhere}
+button:hover{filter:brightness(1.08)}
+button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+button.danger{background:#48202d;color:#ff9aaa}
+button.small{padding:7px 9px;font-size:12px}
+.full{width:100%;margin-top:10px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:19px;margin-bottom:19px;min-width:0;max-width:100%;overflow:hidden}
+h1{font-size:28px;margin:0 0 8px;overflow-wrap:anywhere}
+h2{font-size:18px;margin:0 0 15px;overflow-wrap:anywhere}
+p{overflow-wrap:anywhere}
+.muted,.notice{color:var(--muted);font-size:12px;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}
+.stat-label{font-size:13px;color:var(--muted)}
+.stat-value{font-size:26px;font-weight:bold;margin-top:10px;overflow-wrap:anywhere}
+.green{color:var(--green)}.red{color:var(--red)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.mini{background:var(--panel2);padding:13px;border-radius:12px;min-width:0;overflow-wrap:anywhere}
+.mini strong{display:block;font-size:19px;margin-top:7px;overflow-wrap:anywhere}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.toolbar input{max-width:230px}
+.transactions{display:flex;flex-direction:column;gap:9px;min-width:0}
+.transaction{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;background:var(--panel2);border-radius:12px;min-width:0;max-width:100%}
+.transaction>div:first-child{min-width:0;overflow-wrap:anywhere}
+.transaction-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;min-width:0}
+.transaction-meta{font-size:12px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}
+.transaction-amount{text-align:right;font-weight:bold;white-space:nowrap}
+.transaction-equivalent{font-size:11px;color:var(--muted);text-align:right}
+.empty{text-align:center;color:var(--muted);padding:22px;font-size:14px}
+.progress{height:10px;background:#26344b;border-radius:20px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;background:var(--green)}
+.goal-actions{display:flex;gap:7px;margin-top:10px;min-width:0}
+.goal-actions input{flex:1}
+.favorite-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:10px}
+.favorite-item{background:var(--panel2);padding:12px;border-radius:10px;display:flex;justify-content:space-between;gap:8px;align-items:center;min-width:0}
+.favorite-item>div{min-width:0;overflow-wrap:anywhere}
+.favorite-item small{display:block;color:var(--muted);margin-top:5px}
+.chart-area{height:220px;width:100%;display:flex;justify-content:center;align-items:center;overflow:hidden}
+canvas{display:block;width:100%;max-width:340px;height:auto;max-height:220px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.legend span{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.settings-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.setting{display:flex;flex-direction:column;gap:7px;min-width:0}
+.calendar-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;width:100%}
+.day-name,.day{padding:8px 2px;text-align:center;border-radius:8px;font-size:12px;min-width:0}
+.day-name{color:var(--muted);font-weight:bold}
+.day{background:var(--panel2);min-height:54px;cursor:pointer}
+.day.today{outline:2px solid var(--green)}
+.day.selected{background:var(--green);color:#071b14}
+.day.has-items:after{content:"•";display:block;color:var(--green);font-size:17px}
+.day.selected:after{color:#071b14}
+.calendar-details{margin-top:12px;padding:12px;background:var(--panel2);border-radius:10px;overflow-wrap:anywhere}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--green);color:#071b14;padding:13px 18px;border-radius:12px;font-weight:bold;display:none;z-index:10;max-width:90%;text-align:center}
+.calc-display{font-size:25px;text-align:right;padding:15px;background:var(--panel2);border-radius:10px;margin-bottom:10px;min-height:55px;overflow-wrap:anywhere}
+.calc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.calc-grid button{padding:15px 5px}
+.notification{padding:10px;background:var(--panel2);border-radius:9px;margin:7px 0;font-size:13px;overflow-wrap:anywhere}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+[hidden]{display:none!important}
+
+@media(max-width:700px){
+ main{padding:18px 4% 45px}
+ .stats,.two,.three,.settings-grid{grid-template-columns:minmax(0,1fr)}
+ .stat-value{font-size:23px}
+ .card{padding:15px}
+ .chart-area{height:200px}
+}
+@media(max-width:520px){
+ header{padding:14px 4%;align-items:flex-start}
+ .header-left{width:100%;justify-content:space-between;gap:8px}
+ .logo{font-size:21px}
+ .version{font-size:9px;padding:6px 8px}
+ header>select{width:100%!important}
+ .form-grid{grid-template-columns:minmax(0,1fr)}
+ .transaction{align-items:flex-start;flex-direction:column}
+ .transaction-actions{justify-content:flex-start;width:100%}
+ .transaction-amount,.transaction-equivalent{text-align:left}
+ .day{min-height:42px;font-size:11px;padding:7px 1px}
+ .day-name{font-size:10px}
+ .goal-actions{flex-wrap:wrap}
+ .goal-actions input{flex-basis:100%}
+ .favorite-item{flex-wrap:wrap}
+ .calendar-head button{padding:9px 12px}
+ .toolbar{align-items:stretch}
+ .toolbar input{max-width:none;width:100%}
+ .calc-grid{gap:5px}
+ .calc-grid button{padding:13px 3px}
+}
+@media(max-width:360px){
+ .logo{font-size:19px}
+ .version{font-size:8px}
+ .card{padding:12px}
+ .stat-value{font-size:21px}
+ .day{min-height:37px;font-size:10px}
+ .transaction-actions button{font-size:11px;padding:7px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="header-left">
+  <button class="secondary" onclick="toggleSettings()">⚙️ Paramètres</button>
+  <div class="logo">BUDGET<span>LY</span> <span class="version">PREMIUM 7.1</span></div>
+ </div>
+ <select id="currency" onchange="changeCurrency()" style="width:auto">
+  <option value="EUR">🇪🇺 Euro (€)</option>
+  <option value="XOF">🇸🇳 FCFA</option>
+  <option value="USD">🇺🇸 Dollar ($)</option>
+ </select>
+</header>
+
+<main>
+<section class="card" id="settings" hidden>
+ <div class="toolbar"><h2>⚙️ Paramètres et personnalisation</h2><button class="secondary small" onclick="toggleSettings()">Fermer</button></div>
+
+ <h2>🎨 Personnalisation</h2>
+ <div class="settings-grid">
+  <label class="setting">Nom affiché<input id="customName" maxlength="24" placeholder="Ton pseudo"></label>
+  <label class="setting">Thème<select id="themeChoice"><option value="dark">Sombre</option><option value="light">Clair</option></select></label>
+  <label class="setting">Couleur principale<input id="accentChoice" type="color"></label>
+ </div>
+ <button class="full" onclick="savePreferences()">Enregistrer la personnalisation</button>
+
+ <hr style="border:0;border-top:1px solid var(--border);margin:22px 0">
+
+ <h2>🎨 Icônes des catégories</h2>
+ <p class="notice">Choisis les icônes qui apparaîtront dans tes opérations, tes graphiques et ton historique.</p>
+ <div id="categoryIcons" class="settings-grid"></div>
+ <button class="full" onclick="saveIcons()">Enregistrer les icônes</button>
+
+ <hr style="border:0;border-top:1px solid var(--border);margin:22px 0">
+
+ <h2>🔄 Réinitialiser Budgetly</h2>
+ <p class="notice">Cette action efface les opérations, objectifs, favoris, notifications, icônes et préférences enregistrés dans ce navigateur. Elle est irréversible.</p>
+ <button class="danger full" onclick="resetAll()">Réinitialiser toutes mes données</button>
+
+ <p class="notice" style="margin-top:15px">Tes paramètres et tes données sont sauvegardés dans ce navigateur.</p>
+</section>
+
+<section class="welcome">
+ <h1 id="welcomeTitle">Ton espace financier 👋</h1>
+ <p class="muted">Bienvenue sur ton tableau de bord Budgetly.</p>
+</section>
+
+<section class="stats">
+ <div class="card"><div class="stat-label">💰 Solde actuel</div><div class="stat-value green" id="balance">0 €</div></div>
+ <div class="card"><div class="stat-label">📈 Revenus totaux</div><div class="stat-value" id="income">0 €</div></div>
+ <div class="card"><div class="stat-label">📉 Dépenses totales</div><div class="stat-value red" id="expenses">0 €</div></div>
+</section>
+
+<section class="two">
+ <div class="card"><h2>Répartition des dépenses</h2><div class="chart-area"><canvas id="donut" width="340" height="220"></canvas></div><div class="legend" id="legend"></div></div>
+ <div class="card"><h2>Dépenses par catégorie</h2><div class="chart-area"><canvas id="bars" width="340" height="220"></canvas></div></div>
+</section>
+
+<section class="two">
+ <div class="card">
+  <h2>🔮 Prévision de fin de mois</h2>
+  <div class="two"><div class="mini"><span class="muted">Solde estimé</span><strong id="forecastBalance">—</strong></div><div class="mini"><span class="muted">Dépenses estimées</span><strong id="forecastExpenses">—</strong></div></div>
+  <p class="notice" id="forecastNote"></p>
+ </div>
+ <div class="card">
+  <h2>🏆 Tes records personnels</h2>
+  <div class="two"><div class="mini"><span class="muted">Mois le moins dépensier</span><strong id="recordLow">—</strong></div><div class="mini"><span class="muted">Meilleur mois d'épargne</span><strong id="recordSaving">—</strong></div></div>
+  <p class="notice" id="recordNote"></p>
+ </div>
+</section>
+
+<section class="card">
+ <h2>⭐ Mes opérations favorites</h2>
+ <p class="notice">Enregistre une opération depuis l'historique puis réutilise-la.</p>
+ <div id="favorites" class="favorite-list"><div class="empty">Aucun favori.</div></div>
+</section>
+
+<section class="card">
+ <h2>➕ Ajouter une opération</h2>
+ <form id="transactionForm">
+  <div class="form-grid">
+   <input id="description" placeholder="Description" maxlength="60">
+   <input id="amount" type="number" min="0.01" step="0.01" placeholder="Montant" required>
+   <select id="type"><option value="expense">Dépense</option><option value="income">Revenu</option></select>
+   <select id="category"></select>
+   <input id="date" type="date" required>
+  </div>
+  <label class="notice" style="display:block;margin-top:12px"><input type="checkbox" id="isVacation"> 🏖️ Cette opération concerne mes vacances</label>
+  <button class="full" type="submit">Ajouter l'opération +</button>
+ </form>
+</section>
+
+<section class="card">
+ <h2>🎯 Mes objectifs d'épargne</h2>
+ <form id="goalForm">
+  <div class="form-grid"><input id="goalName" placeholder="Nom de l'objectif" required maxlength="40"><input id="goalTarget" type="number" min="0.01" step="0.01" placeholder="Montant à atteindre" required></div>
+  <button class="full" type="submit">Créer un objectif +</button>
+ </form>
+ <div id="goals" style="margin-top:15px"></div>
+</section>
+
+<section class="card">
+ <h2>🏖️ Mode vacances</h2>
+ <p class="notice">Crée un budget séparé pour suivre tes dépenses de vacances. Coche « Cette opération concerne mes vacances » lors de l'ajout.</p>
+ <div class="form-grid">
+  <input id="vacationName" placeholder="Nom du voyage (ex : vacances d'été)">
+  <input id="vacationBudget" type="number" min="0" step="0.01" placeholder="Budget prévu">
+ </div>
+ <button class="full" onclick="saveVacation()">Enregistrer le budget vacances</button>
+ <div class="three" style="margin-top:14px">
+  <div class="mini"><span class="muted">Budget prévu</span><strong id="vacBudget">0 €</strong></div>
+  <div class="mini"><span class="muted">Dépensé</span><strong id="vacSpent">0 €</strong></div>
+  <div class="mini"><span class="muted">Restant</span><strong id="vacRemaining">0 €</strong></div>
+ </div>
+ <div class="progress"><div class="progress-fill" id="vacProgress" style="width:0%"></div></div>
+</section>
+
+<section class="card">
+ <h2>📅 Calendrier des dépenses</h2>
+ <div class="calendar-head">
+  <button class="secondary" onclick="changeMonth(-1)">←</button>
+  <strong id="calendarTitle"></strong>
+  <button class="secondary" onclick="changeMonth(1)">→</button>
+ </div>
+ <div class="calendar" id="calendar"></div>
+ <div class="calendar-details" id="calendarDetails">Sélectionne un jour pour voir les opérations.</div>
+</section>
+
+<section class="card">
+ <h2>📊 Comparateur entre deux mois</h2>
+ <div class="form-grid">
+  <label class="setting">Premier mois<input type="month" id="compareA"></label>
+  <label class="setting">Deuxième mois<input type="month" id="compareB"></label>
+ </div>
+ <button class="full" onclick="compareMonths()">Comparer les mois</button>
+ <div id="comparison" class="two" style="margin-top:15px"></div>
+</section>
+
+<section class="card">
+ <h2>🧮 Calculatrice intégrée</h2>
+ <div class="calc-display" id="calcDisplay">0</div>
+ <div class="calc-grid" id="calcButtons"></div>
+ <p class="notice">Calculatrice simple pour tes additions, soustractions, multiplications et divisions.</p>
+</section>
+
+<section class="card">
+ <h2>🔔 Notifications Budgetly</h2>
+ <p class="notice">Tes alertes apparaissent ici pendant l'utilisation du site.</p>
+ <div id="notifications"><div class="empty">Aucune notification pour le moment.</div></div>
+ <button class="secondary full" onclick="clearNotifications()">Effacer les notifications</button>
+</section>
+
+<section class="card">
+ <h2>📄 Exporter mon budget en PDF</h2>
+ <p class="notice">Prépare un rapport avec ton solde, tes revenus, tes dépenses, tes objectifs et ton historique. Dans la fenêtre qui s'ouvre, choisis « Enregistrer au format PDF ».</p>
+ <button class="full" onclick="exportPDF()">Exporter mon budget en PDF</button>
+</section>
+
+<section class="card">
+ <div class="toolbar"><h2 style="margin:0">📋 Historique des opérations</h2><input id="search" placeholder="Rechercher..." oninput="renderTransactions()"></div>
+ <div class="transactions" id="transactions" style="margin-top:15px"></div>
+ <button class="secondary full" onclick="clearTransactions()">Effacer toutes les opérations</button>
+</section>
+
+<p class="notice">💡 Les montants sont conservés en euros pour les calculs. Les taux de change sont indicatifs : EUR = 1, XOF = 655,957 et USD = 1,0989. Les données restent dans ce navigateur. Ne saisis pas d'informations bancaires confidentielles.</p>
+</main>
+
+<footer>BUDGETLY PREMIUM 7.1 · Gère ton budget, construis tes projets ✨</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY="budgetly_premium_v7";
+const rates={EUR:1,XOF:655.957,USD:1.0989};
+const categories=["Alimentation","Transport","Loisirs","Shopping","Études","Abonnements","Santé","Autres"];
+const defaultIcons={"Alimentation":"🍔","Transport":"🚗","Loisirs":"🎮","Shopping":"🛍️","Études":"📚","Abonnements":"📱","Santé":"💊","Autres":"📦"};
+const colors=["#35e69b","#5b8cff","#ffb84d","#ff657d","#bd8cff","#44c9d9","#e7d45b","#a4b2c7"];
+
+let data={transactions:[],goals:[],favorites:[],preferences:{name:"",theme:"dark",accent:"#35e69b"},currency:"EUR",icons:{...defaultIcons},vacation:{name:"",budget:0},notifications:[]};
+let calDate=new Date(),selectedDay=localDate();
+let calcValue="0",calcPrevious=null,calcOperator=null,calcFresh=false;
+
+function localDate(d=new Date()){
+ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+try{
+ const saved=JSON.parse(localStorage.getItem(STORAGE_KEY))||JSON.parse(localStorage.getItem("budgetly_premium_v6"))||JSON.parse(localStorage.getItem("budgetly_premium_v5"))||JSON.parse(localStorage.getItem("budgetly_premium_v4"))||JSON.parse(localStorage.getItem("budgetly"));
+ if(saved){
+  data={...data,...saved};
+  data.transactions=Array.isArray(saved.transactions)?saved.transactions:[];
+  data.goals=Array.isArray(saved.goals)?saved.goals:[];
+  data.favorites=Array.isArray(saved.favorites)?saved.favorites:[];
+  data.preferences={...data.preferences,...(saved.preferences||{})};
+  data.icons={...defaultIcons,...(saved.icons||{})};
+  data.vacation={...data.vacation,...(saved.vacation||{})};
+  data.notifications=Array.isArray(saved.notifications)?saved.notifications:[];
+ }
+}catch(e){console.log("Données non récupérées");}
+
+data.transactions=data.transactions.map(t=>({...t,id:t.id||Date.now()+Math.random(),description:t.description||"Ancienne opération",amount:Number(t.amount)||0,originalAmount:Number(t.originalAmount??t.amount)||0,originalCurrency:t.originalCurrency||"EUR",type:t.type==="income"?"income":"expense",category:t.category||"Autres",date:t.date||localDate(),isVacation:!!t.isVacation}));
+if(!data.icons)data.icons={...defaultIcons};
+
+function currency(){return document.getElementById("currency").value}
+function fromEUR(n){return n*(rates[currency()]||1)}
+function toEUR(n){return n/(rates[currency()]||1)}
+function money(n){return fmt(fromEUR(n),currency())}
+function fmt(n,c){return new Intl.NumberFormat("fr-FR",{style:"currency",currency:c,maximumFractionDigits:c==="XOF"?0:2}).format(n||0)}
+function save(){data.currency=currency();try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){alert("Sauvegarde impossible dans ce navigateur.")}}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.style.display="block";setTimeout(()=>el.style.display="none",2600)}
+function monthKey(d){return String(d||"").slice(0,7)}
+function monthLabel(k){if(!k)return"—";let p=k.split("-");return new Intl.DateTimeFormat("fr-FR",{month:"long",year:"numeric"}).format(new Date(+p[0],+p[1]-1,1))}
+function totals(list=data.transactions){let income=0,expenses=0;list.forEach(t=>t.type==="income"?income+=t.amount:expenses+=t.amount);return{income,expenses,balance:income-expenses}}
+function addNotification(message){data.notifications.unshift({id:Date.now()+Math.random(),message,date:new Date().toLocaleString("fr-FR")});data.notifications=data.notifications.slice(0,30);renderNotifications();save()}
+function changeCurrency(){save();render()}
+function toggleSettings(){const s=document.getElementById("settings");s.hidden=!s.hidden;if(!s.hidden)s.scrollIntoView({behavior:"smooth",block:"start"})}
+
+function applyPreferences(){
+ let p=data.preferences||{};
+ document.body.classList.toggle("light",p.theme==="light");
+ if(/^#[0-9a-f]{6}$/i.test(p.accent||""))document.documentElement.style.setProperty("--green",p.accent);
+ document.getElementById("welcomeTitle").textContent=p.name?"Ton espace financier, "+p.name+" 👋":"Ton espace financier 👋";
+ document.getElementById("customName").value=p.name||"";
+ document.getElementById("themeChoice").value=p.theme||"dark";
+ document.getElementById("accentChoice").value=p.accent||"#35e69b";
+}
+
+function savePreferences(){
+ data.preferences={name:document.getElementById("customName").value.trim(),theme:document.getElementById("themeChoice").value,accent:document.getElementById("accentChoice").value};
+ save();applyPreferences();renderCharts();toast("Personnalisation enregistrée !");
+}
+
+function fillCategories(){
+ document.getElementById("category").innerHTML=categories.map(c=>`<option value="${esc(c)}">${data.icons[c]||"📦"} ${esc(c)}</option>`).join("");
+ document.getElementById("categoryIcons").innerHTML=categories.map(c=>`<label class="setting">${esc(c)}<input data-icon="${esc(c)}" maxlength="4" value="${esc(data.icons[c]||"📦")}"></label>`).join("");
+}
+
+function saveIcons(){
+ document.querySelectorAll("[data-icon]").forEach(i=>{data.icons[i.dataset.icon]=i.value.trim()||defaultIcons[i.dataset.icon]});
+ save();fillCategories();render();toast("Icônes mises à jour !");
+}
+
+document.getElementById("date").value=localDate();
+document.getElementById("currency").value=rates[data.currency]?data.currency:"EUR";
+fillCategories();applyPreferences();
+
+document.getElementById("transactionForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ let description=document.getElementById("description").value.trim(),amount=Number(document.getElementById("amount").value),type=document.getElementById("type").value,category=document.getElementById("category").value,date=document.getElementById("date").value;
+ if(!Number.isFinite(amount)||amount<=0||!date){alert("Vérifie le montant et la date.");return}
+ if(type==="expense"&&!description){alert("Ajoute une description à ta dépense.");return}
+ const t={id:Date.now()+Math.random(),description:description||"Revenu",amount:toEUR(amount),originalAmount:amount,originalCurrency:currency(),type,category,date,isVacation:document.getElementById("isVacation").checked};
+ data.transactions.unshift(t);save();e.target.reset();document.getElementById("date").value=localDate();render();addNotification((type==="expense"?"Dépense ajoutée : ":"Revenu ajouté : ")+t.description);
+ if(t.isVacation&&type==="expense")toast("Dépense ajoutée au budget vacances !");
+});
+
+function render(){
+ let t=totals();
+ document.getElementById("balance").textContent=money(t.balance);
+ document.getElementById("income").textContent=money(t.income);
+ document.getElementById("expenses").textContent=money(t.expenses);
+ renderCharts();renderTransactions();renderGoals();renderFavorites();renderForecast();renderVacation();renderNotifications();renderCalendar();applyPreferences();
+}
+
+function renderTransactions(){
+ let q=document.getElementById("search").value.toLowerCase(),list=data.transactions.filter(t=>(t.description+" "+t.category).toLowerCase().includes(q)),el=document.getElementById("transactions");
+ if(!list.length){el.innerHTML='<div class="empty">Aucune opération trouvée.</div>';return}
+ el.innerHTML=list.map(t=>`<div class="transaction"><div><strong>${data.icons[t.category]||"📦"} ${esc(t.description)}</strong><div class="transaction-meta">${esc(t.category)} · ${esc(t.date)} ${t.isVacation?"· 🏖️ Vacances":""}</div></div><div class="transaction-actions"><div><div class="transaction-amount ${t.type==="income"?"green":"red"}">${t.type==="income"?"+":"−"}${fmt(t.originalAmount,t.originalCurrency)}</div>${t.originalCurrency!==currency()?`<div class="transaction-equivalent">≈ ${money(t.amount)}</div>`:""}</div><button class="secondary small" onclick="toggleFavorite('${t.id}')">${isFavorite(t)?"★":"☆"}</button><button class="secondary small" onclick="editTransaction('${t.id}')">Modifier</button><button class="danger small" onclick="deleteTransaction('${t.id}')">✕</button></div></div>`).join("");
+}
+
+function deleteTransaction(id){if(!confirm("Supprimer cette opération ?"))return;data.transactions=data.transactions.filter(t=>String(t.id)!==String(id));save();render()}
+function editTransaction(id){
+ let t=data.transactions.find(x=>String(x.id)===String(id));if(!t)return;
+ let d=prompt("Description :",t.description);if(d===null)return;
+ let a=Number(prompt("Nouveau montant en "+currency()+" :",fromEUR(t.amount).toFixed(2)));
+ if(!Number.isFinite(a)||a<=0){alert("Montant invalide.");return}
+ t.description=d.trim()||"Opération";t.amount=toEUR(a);t.originalAmount=a;t.originalCurrency=currency();save();render();
+}
+function clearTransactions(){if(!data.transactions.length)return;if(!confirm("Supprimer tout l'historique ?"))return;data.transactions=[];save();render()}
+function isFavorite(t){return data.favorites.some(f=>String(f.sourceId)===String(t.id))}
+
+function toggleFavorite(id){
+ let t=data.transactions.find(x=>String(x.id)===String(id));if(!t)return;
+ if(isFavorite(t))data.favorites=data.favorites.filter(f=>String(f.sourceId)!==String(id));
+ else data.favorites.push({id:Date.now()+Math.random(),sourceId:t.id,description:t.description,amount:t.amount,type:t.type,category:t.category});
+ save();renderFavorites();renderTransactions();
+}
+
+function renderFavorites(){
+ let el=document.getElementById("favorites");
+ if(!data.favorites.length){el.innerHTML='<div class="empty">Aucun favori pour le moment.</div>';return}
+ el.innerHTML=data.favorites.map(f=>`<div class="favorite-item"><div><strong>${esc(f.description)}</strong><small>${data.icons[f.category]||"📦"} ${esc(f.category)} · ${money(f.amount)}</small></div><div><button class="small" onclick="useFavorite('${f.id}')">Utiliser</button><button class="danger small" onclick="removeFavorite('${f.id}')">✕</button></div></div>`).join("");
+}
+
+function useFavorite(id){
+ let f=data.favorites.find(x=>String(x.id)===String(id));if(!f)return;
+ document.getElementById("description").value=f.description;
+ document.getElementById("amount").value=fromEUR(f.amount).toFixed(currency()==="XOF"?0:2);
+ document.getElementById("type").value=f.type;
+ document.getElementById("category").value=f.category;
+ document.getElementById("date").value=localDate();
+ document.getElementById("transactionForm").scrollIntoView({behavior:"smooth"});
+}
+function removeFavorite(id){data.favorites=data.favorites.filter(f=>String(f.id)!==String(id));save();renderFavorites()}
+
+document.getElementById("goalForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ let name=document.getElementById("goalName").value.trim(),target=Number(document.getElementById("goalTarget").value);
+ if(!name||target<=0){alert("Vérifie ton objectif.");return}
+ data.goals.push({id:Date.now()+Math.random(),name,target:toEUR(target),saved:0});
+ save();e.target.reset();render();
+});
+
+function renderGoals(){
+ let el=document.getElementById("goals");
+ if(!data.goals.length){el.innerHTML='<div class="empty">Aucun objectif pour le moment.</div>';return}
+ el.innerHTML=data.goals.map(g=>{
+  let p=Math.min(100,g.saved/g.target*100);
+  return`<div class="mini" style="margin-bottom:10px"><strong>${esc(g.name)} · ${p.toFixed(0)}%</strong><div class="progress"><div class="progress-fill" style="width:${p}%"></div></div><span class="muted">${money(g.saved)} sur ${money(g.target)}</span><div class="goal-actions"><input type="number" min="0.01" step="0.01" placeholder="Ajouter une somme" id="contrib${g.id}"><button onclick="contribute('${g.id}')">Ajouter</button><button class="danger" onclick="deleteGoal('${g.id}')">✕</button></div></div>`;
+ }).join("");
+}
+
+function contribute(id){
+ let g=data.goals.find(x=>String(x.id)===String(id)),a=Number(document.getElementById("contrib"+id).value);
+ if(!g||a<=0){alert("Montant invalide.");return}
+ let before=g.saved;g.saved+=toEUR(a);save();render();
+ if(before<g.target&&g.saved>=g.target)addNotification("🎉 Objectif atteint : "+g.name);
+}
+function deleteGoal(id){if(!confirm("Supprimer cet objectif ?"))return;data.goals=data.goals.filter(g=>String(g.id)!==String(id));save();render()}
+
+function renderForecast(){
+ let now=new Date(),key=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0"),days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),elapsed=now.getDate(),items=data.transactions.filter(t=>monthKey(t.date)===key),s=totals(items),pi=s.income/Math.max(1,elapsed)*days,pe=s.expenses/Math.max(1,elapsed)*days;
+ document.getElementById("forecastBalance").textContent=money(pi-pe);
+ document.getElementById("forecastExpenses").textContent=money(pe);
+ document.getElementById("forecastNote").textContent=items.length?"Estimation basée sur le rythme de ce mois. Ce n'est pas une garantie.":"Ajoute des opérations ce mois-ci pour obtenir une estimation.";
+ let months={};
+ data.transactions.forEach(t=>{let k=monthKey(t.date);if(!months[k])months[k]={income:0,expenses:0};months[k][t.type==="income"?"income":"expenses"]+=t.amount});
+ let arr=Object.entries(months);
+ if(!arr.length){document.getElementById("recordLow").textContent="—";document.getElementById("recordSaving").textContent="—";document.getElementById("recordNote").textContent="Tes records apparaîtront ici.";return}
+ let low=arr.reduce((a,b)=>b[1].expenses<a[1].expenses?b:a),best=arr.reduce((a,b)=>b[1].income-b[1].expenses>a[1].income-a[1].expenses?b:a);
+ document.getElementById("recordLow").textContent=monthLabel(low[0]);
+ document.getElementById("recordSaving").textContent=money(best[1].income-best[1].expenses);
+ document.getElementById("recordNote").textContent="Meilleur mois d'épargne : "+monthLabel(best[0]);
+}
+
+function saveVacation(){
+ let b=Number(document.getElementById("vacationBudget").value);
+ data.vacation={name:document.getElementById("vacationName").value.trim(),budget:toEUR(Math.max(0,b))};
+ save();renderVacation();toast("Budget vacances enregistré !");
+}
+
+function renderVacation(){
+ let spent=data.transactions.filter(t=>t.isVacation&&t.type==="expense").reduce((s,t)=>s+t.amount,0),budget=data.vacation.budget||0,remaining=budget-spent;
+ document.getElementById("vacationName").value=data.vacation.name||"";
+ document.getElementById("vacationBudget").value=data.vacation.budget?fromEUR(data.vacation.budget):"";
+ document.getElementById("vacBudget").textContent=money(budget);
+ document.getElementById("vacSpent").textContent=money(spent);
+ document.getElementById("vacRemaining").textContent=money(remaining);
+ document.getElementById("vacProgress").style.width=(budget?Math.min(100,spent/budget*100):0)+"%";
+}
+
+function renderNotifications(){
+ let el=document.getElementById("notifications");
+ if(!data.notifications.length){el.innerHTML='<div class="empty">Aucune notification pour le moment.</div>';return}
+ el.innerHTML=data.notifications.map(n=>`<div class="notification">${esc(n.message)}<div class="muted">${esc(n.date)}</div></div>`).join("");
+}
+function clearNotifications(){data.notifications=[];save();renderNotifications()}
+
+function renderCalendar(){
+ let y=calDate.getFullYear(),m=calDate.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),offset=(first+6)%7;
+ document.getElementById("calendarTitle").textContent=new Intl.DateTimeFormat("fr-FR",{month:"long",year:"numeric"}).format(calDate);
+ let html=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(x=>`<div class="day-name">${x}</div>`).join("");
+ for(let i=0;i<offset;i++)html+='<div></div>';
+ for(let d=1;d<=days;d++){
+  let key=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"),has=data.transactions.some(t=>t.date===key),today=key===localDate();
+  html+=`<div class="day ${has?"has-items":""} ${today?"today":""} ${selectedDay===key?"selected":""}" onclick="selectCalendarDay('${key}')">${d}</div>`;
+ }
+ document.getElementById("calendar").innerHTML=html;
+ showCalendarDetails(selectedDay);
+}
+function changeMonth(n){calDate.setMonth(calDate.getMonth()+n);renderCalendar()}
+function selectCalendarDay(key){selectedDay=key;renderCalendar()}
+
+function showCalendarDetails(key){
+ let list=data.transactions.filter(t=>t.date===key),el=document.getElementById("calendarDetails");
+ if(!list.length){el.innerHTML="<strong>"+esc(key)+"</strong><p class='muted'>Aucune opération ce jour-là.</p>";return}
+ el.innerHTML="<strong>"+esc(key)+"</strong>"+list.map(t=>`<div class="notification">${data.icons[t.category]||"📦"} ${esc(t.description)} — ${t.type==="income"?"+":"−"}${fmt(t.originalAmount,t.originalCurrency)}</div>`).join("");
+}
+
+function compareMonths(){
+ let a=document.getElementById("compareA").value,b=document.getElementById("compareB").value;
+ if(!a||!b){alert("Choisis deux mois.");return}
+ let x=totals(data.transactions.filter(t=>monthKey(t.date)===a)),y=totals(data.transactions.filter(t=>monthKey(t.date)===b));
+ document.getElementById("comparison").innerHTML=[{k:a,t:x},{k:b,t:y}].map(o=>`<div class="mini"><strong>${esc(monthLabel(o.k))}</strong><p class="muted">Revenus : ${money(o.t.income)}</p><p class="muted">Dépenses : ${money(o.t.expenses)}</p><p class="muted">Solde : <strong>${money(o.t.balance)}</strong></p></div>`).join("");
+}
+
+function setupCalculator(){
+ let keys=["7","8","9","÷","4","5","6","×","1","2","3","−","C","0",".","+","="];
+ document.getElementById("calcButtons").innerHTML=keys.map(k=>`<button class="${["C","="].includes(k)?"secondary":""}" onclick="calcPress('${k}')">${k}</button>`).join("");
+}
+
+function calcPress(k){
+ if(k==="C"){calcValue="0";calcPrevious=null;calcOperator=null;calcFresh=false}
+ else if(["+","−","×","÷"].includes(k)){calcPrevious=Number(calcValue);calcOperator=k;calcFresh=true}
+ else if(k==="="){
+  if(calcPrevious!==null&&calcOperator){
+   let b=Number(calcValue),a=calcPrevious;
+   let r=calcOperator==="+"?a+b:calcOperator==="−"?a-b:calcOperator==="×"?a*b:b===0?"Erreur":a/b;
+   calcValue=String(r);calcPrevious=null;calcOperator=null;calcFresh=true;
+  }
+ }else{
+  if(k==="."&&calcValue.includes(".")&&!calcFresh)return;
+  calcValue=calcFresh?(k==="."?"0.":k):calcValue==="0"?k:calcValue+k;
+  calcFresh=false;
+ }
+ document.getElementById("calcDisplay").textContent=calcValue;
+}
+
+function renderCharts(){drawDonut();drawBars()}
+
+function drawDonut(){
+ let c=document.getElementById("donut"),x=c.getContext("2d");
+ x.clearRect(0,0,c.width,c.height);
+ let sums=categories.map(cat=>data.transactions.filter(t=>t.type==="expense"&&t.category===cat).reduce((s,t)=>s+t.amount,0)),total=sums.reduce((a,b)=>a+b,0),cx=170,cy=105,r=75,inner=45;
+ if(!total){
+  x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.strokeStyle="#26344b";x.lineWidth=25;x.stroke();
+  x.fillStyle="#91a0b8";x.textAlign="center";x.fillText("Aucune dépense",cx,cy+4);
+  document.getElementById("legend").innerHTML="";return;
+ }
+ let start=-Math.PI/2;
+ sums.forEach((v,i)=>{
+  if(!v)return;
+  let end=start+v/total*Math.PI*2;
+  x.beginPath();x.arc(cx,cy,r,start,end);x.arc(cx,cy,inner,end,start,true);x.closePath();x.fillStyle=colors[i];x.fill();start=end;
+ });
+ x.fillStyle=getComputedStyle(document.body).getPropertyValue("--text");x.font="bold 13px Arial";x.textAlign="center";x.fillText(money(total),cx,cy+5);
+ document.getElementById("legend").innerHTML=sums.map((v,i)=>v?`<span><i class="dot" style="background:${colors[i]}"></i>${data.icons[categories[i]]||""} ${categories[i]}</span>`:"").join("");
+}
+
+function drawBars(){
+ let c=document.getElementById("bars"),x=c.getContext("2d");
+ x.clearRect(0,0,c.width,c.height);
+ let sums=categories.map(cat=>data.transactions.filter(t=>t.type==="expense"&&t.category===cat).reduce((s,t)=>s+t.amount,0)),active=sums.map((v,i)=>({v,i})).filter(o=>o.v>0),max=Math.max(...sums,1);
+ if(!active.length){x.fillStyle="#91a0b8";x.textAlign="center";x.fillText("Ajoute des dépenses",170,110);return}
+ let gap=220/active.length,w=Math.min(27,gap-7);
+ active.forEach((o,j)=>{
+  let h=o.v/max*135,xx=15+j*gap,yy=170-h;
+  x.fillStyle=colors[o.i];x.beginPath();x.roundRect(xx,yy,w,h,5);x.fill();
+  x.save();x.translate(xx+w/2,180);x.rotate(-.5);x.fillStyle=getComputedStyle(document.body).getPropertyValue("--muted");x.font="10px Arial";x.textAlign="right";x.fillText(data.icons[categories[o.i]]||categories[o.i],0,0);x.restore();
+ });
+}
+
+function exportPDF(){
+ let t=totals(),rows=data.transactions.map(o=>`<tr><td>${esc(o.date)}</td><td>${esc(o.description)}</td><td>${esc(o.category)}</td><td>${esc(o.type)}</td><td>${fmt(o.originalAmount,o.originalCurrency)}</td></tr>`).join("");
+ let goals=data.goals.map(g=>`<li>${esc(g.name)} : ${money(g.saved)} / ${money(g.target)}</li>`).join("");
+ let w=window.open("","_blank");
+ if(!w){alert("Autorise les fenêtres pop-up pour exporter ton PDF.");return}
+ w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Rapport Budgetly</title><style>body{font-family:Arial;padding:30px;color:#172033}h1{color:#16865c}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #ccc;padding:8px;text-align:left;font-size:12px}th{background:#eaf5ef}.stats{display:flex;gap:30px;flex-wrap:wrap}.muted{color:#667}</style></head><body><h1>Rapport Budgetly</h1><p>Généré le ${new Date().toLocaleDateString("fr-FR")}</p><div class="stats"><div><b>Solde</b><p>${money(t.balance)}</p></div><div><b>Revenus</b><p>${money(t.income)}</p></div><div><b>Dépenses</b><p>${money(t.expenses)}</p></div></div><h2>Objectifs d'épargne</h2><ul>${goals||"<li>Aucun objectif</li>"}</ul><h2>Historique des opérations</h2><table><tr><th>Date</th><th>Description</th><th>Catégorie</th><th>Type</th><th>Montant d'origine</th></tr>${rows}</table><script>window.onload=()=>window.print()<\/script></body></html>`);
+ w.document.close();
+}
+
+function resetAll(){
+ if(!confirm("ATTENTION : supprimer toutes tes données Budgetly ? Cette action est irréversible."))return;
+ if(!confirm("Dernière confirmation : veux-tu vraiment tout réinitialiser ?"))return;
+
+ // Suppression de la version actuelle et des anciennes sauvegardes Budgetly.
+ [STORAGE_KEY,"budgetly_premium_v6","budgetly_premium_v5","budgetly_premium_v4","budgetly"].forEach(k=>localStorage.removeItem(k));
+
+ data={transactions:[],goals:[],favorites:[],preferences:{name:"",theme:"dark",accent:"#35e69b"},currency:"EUR",icons:{...defaultIcons},vacation:{name:"",budget:0},notifications:[]};
+ document.getElementById("currency").value="EUR";
+ document.getElementById("search").value="";
+ document.getElementById("transactionForm").reset();
+ document.getElementById("goalForm").reset();
+ document.getElementById("date").value=localDate();
+ document.documentElement.style.setProperty("--green","#35e69b");
+ fillCategories();applyPreferences();save();render();
+ toast("Budgetly a été réinitialisé.");
+}
+
+setupCalculator();
+let now=new Date(),monthNow=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+document.getElementById("compareA").value=monthNow;
+document.getElementById("compareB").value=monthNow;
+render();
+</script>
+</body>
+</html>
